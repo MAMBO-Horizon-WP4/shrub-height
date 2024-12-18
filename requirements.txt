@@ -1,0 +1,7 @@
+# local package
+numpy
+pandas
+geopandas
+rasterio
+gdal
+scikit-learn
