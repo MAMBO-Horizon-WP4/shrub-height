@@ -1,46 +1,58 @@
-Strawberry Shrubs
-==============================
+# Shrub height estimation using SfM images
 
-Overview
+## Overview
+
 Provide a concise description of the project's purpose, objectives, and the problem it addresses.
 
-Features
-Feature 1: Brief description.
-Feature 2: Brief description.
-Feature 3: Brief description.
-Installation
+## Installation
+
 Outline the steps to set up the project locally:
 
-Clone the repository:
+1. **Clone the repository**:
+    
+    ```bash
+    git clone https://github.com/barbedorafael/shrub-height.git
+    ```
+    
+2. **Navigate to the project directory**:
+    
+    ```bash
+    cd shrub-height
+    ```
+    
+3. **Create and activate a virtual environment**:
+    
+    ```bash
+    python -m venv env
+    source env/bin/activate  # On Windows: env\Scripts\activate
+    ```
+    
+4. **Install dependencies**:
+    
+    ```bash
+    pip install -r requirements.txt
+    ```
+    
 
-bash
-Copy code
-git clone https://github.com/barbedorafael/shrub-height.git
-Navigate to the project directory:
+## Usage
 
-bash
-Copy code
-cd shrub-height
-Create and activate a virtual environment:
-
-bash
-Copy code
-python -m venv env
-source env/bin/activate  # On Windows: env\Scripts\activate
-Install dependencies:
-
-bash
-Copy code
-pip install -r requirements.txt
-Usage
 Provide examples of how to run the project or scripts, including necessary command-line arguments or configuration files.
 
-Project Structure
-bash
-Copy code
+## Project Structure
+
+```bash
 shrub-height/
 ├── reports/           # Analysis reports
 ├── src/               # Source code
 ├── .gitignore         # Git ignore file
 ├── README.md          # Project documentation
 └── requirements.txt   # Python dependencies
+```
+
+## Contributing
+
+If you welcome contributions, include guidelines on how others can contribute to the project.
+
+## License
+
+Specify the project's license to inform users of usage rights.
