@@ -11,6 +11,8 @@ import numpy as np
 import geopandas as gpd
 import pandas as pd
 
+os.chdir('shrub-height')
+
 def calculate_statistics(points):
     stats = {}
     stats['mean'] = points.mean()
@@ -26,11 +28,12 @@ def calculate_rmse(actual, predicted):
     return np.sqrt(np.mean((actual - predicted) ** 2))
 
 # Directory containing the FGB files
-directory = '../data/interim/lidar_leafon_id'
+directory = 'data/interim/lidar_leafon_manual_id'
 
 # DataFrame to store the results
-df = gpd.read_file('../data/raw/Field_measurements/shrub_clean.shp')
-df = df[['id', 'h_mean']]
+df = gpd.read_file('data/interim/manual_pols.fgb')
+df = df.sort_values(by='id').reset_index(drop=True)
+df = df.drop('geometry', axis=1)
 
 # Loop through each file in the directory
 for filename in os.listdir(directory):
@@ -57,14 +60,14 @@ for filename in os.listdir(directory):
         df.loc[df.id==float(shrub_id), stats_combined.keys()] = stats_combined.values()
 
 df['h_lidar'] = (df.canopy_max - df.ground_max)*100
-df['h_diff'] = df.h_lidar - df.h_mean
 
-calculate_rmse(df.h_mean, df.h_lidar)
-
-df[['h_mean', 'h_lidar']].corr(method='pearson')
+# Compare with field measurements (for field data)
+# df['h_diff'] = df.h_lidar - df.h_mean
+# calculate_rmse(df.h_mean, df.h_lidar)
+# df[['h_mean', 'h_lidar']].corr(method='pearson')
 
 # Save the results to a CSV file
-df.to_csv('../data/processed/shrubs_lidar_leafon.csv')
+df.to_csv('data/processed/stats_manual_lidar_leafon.csv')
 
 
 

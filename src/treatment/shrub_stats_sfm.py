@@ -63,11 +63,11 @@ data_files = [os.path.join(directory, f) for f in os.listdir(directory)
                 if f.startswith("sfm_normalized") and 
                 f.endswith(".tif")]
 
-stats_pols = pd.read_csv("data/processed/stats_manual_lidar_leafon.csv")
-stats_pols = stats_pols[['']]
+pols = gpd.read_file("data/interim/manual_pols.fgb")
+pols = pols.sort_values(by='id').reset_index(drop=True)
 
 stats_list = []
-for index, row in polygons.iterrows():
+for index, row in pols.iterrows():
     stats = get_raster_stats(row, data_files)
     stats['id'] = int(row.id)
     stats_list.append(stats)
@@ -75,7 +75,10 @@ for index, row in polygons.iterrows():
 
 df = pd.DataFrame(stats_list)
 
-df[['h', 'd', 'spec']] = polygons[['h_mean', 'd_mean', 'species']]
+# Get validation height from lidar
+h_lidar = pd.read_csv('data/processed/stats_manual_lidar_leafon.csv', index_col=0)
+
+df[['area', 'h_lidar']] = h_lidar[['area', 'h_lidar']]
 
 df.set_index('id', inplace=True)
 
