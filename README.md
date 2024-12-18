@@ -7,10 +7,10 @@ Provide a concise description of the project's purpose, objectives, and the prob
 ## Usage
 
 ### Step 1: Data Pre-processing
-- **Description**: Fine tuned adjustments of the initial rasters and shapefiles to be better handled by the next phases. The DSM data from SfM was normalized using a 1m DTM from the EA (some further adjustments can be done in this phase, because the SfM data didn't seem to be perfectly aligned with the EA DTM).
+**Description**: Fine tuned adjustments of the initial rasters and shapefiles to be better handled by the next phases. The DSM data from SfM was normalized using a 1m DTM from the EA (some further adjustments can be done in this phase, because the SfM data didn't seem to be perfectly aligned with the EA DTM).
 
 ### Step 2: Data Treatment
-- **Description**: The data from the LiDAR and SfM were collected at the manually identified shrub polygons. The LiDAR point clouds were used as ground truth, whereas the SfM DSM was used to collect stats at the polygons to get modelled height estimates further.
+**Description**: The data from the LiDAR and SfM were collected at the manually identified shrub polygons. The LiDAR point clouds were used as ground truth, whereas the SfM DSM was used to collect stats at the polygons to get modelled height estimates further.
 
 - **Aggregate LiDAR Point Clouds at individual shrubs**: `src/treatment/las_pc_at_shrubs.py`
 -- input: 
