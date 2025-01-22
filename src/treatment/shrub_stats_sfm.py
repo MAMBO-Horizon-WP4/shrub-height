@@ -80,6 +80,7 @@ df = pd.DataFrame(stats_list)
 # Get validation height from lidar
 h_lidar = pd.read_csv(f'data/processed/stats_{method}_lidar_leafon.csv', index_col=0)
 
+
 df[['area', 'h_lidar']] = h_lidar[['area', 'h_lidar']]
 
 df.set_index('id', inplace=True)
