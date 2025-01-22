@@ -10,5 +10,8 @@ def create_circle(row):
     return row['geometry'].buffer(radius)
 
 df['geometry'] = df.apply(create_circle, axis=1)
+df['area'] = df.area
+
+df = df[['id', 'species', 'area', 'h_mean', 'geometry']]
 
 df.to_file("data/interim/field_pols.fgb", driver='FlatGeobuf')

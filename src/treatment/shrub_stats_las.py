@@ -28,10 +28,12 @@ def calculate_rmse(actual, predicted):
     return np.sqrt(np.mean((actual - predicted) ** 2))
 
 # Directory containing the FGB files
-directory = 'data/interim/lidar_leafon_manual_id'
+src = 'lidar_leafon'
+method = 'field'
+directory = f'data/interim/{src}_{method}_id'
 
 # DataFrame to store the results
-df = gpd.read_file('data/interim/manual_pols.fgb')
+df = gpd.read_file(f'data/interim/{method}_pols.fgb')
 df = df.sort_values(by='id').reset_index(drop=True)
 df = df.drop('geometry', axis=1)
 
@@ -67,7 +69,7 @@ df['h_lidar'] = (df.canopy_max - df.ground_max)*100
 # df[['h_mean', 'h_lidar']].corr(method='pearson')
 
 # Save the results to a CSV file
-df.to_csv('data/processed/stats_manual_lidar_leafon.csv')
+df.to_csv(f'data/processed/stats_{method}_{src}.csv')
 
 
 

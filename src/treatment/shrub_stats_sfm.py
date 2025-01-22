@@ -59,11 +59,13 @@ def get_raster_stats(polygon, raster_files):
     return stats_d
 
 directory = 'data/interim'
+method = 'field'
+
 data_files = [os.path.join(directory, f) for f in os.listdir(directory)
                 if f.startswith("sfm_normalized") and 
                 f.endswith(".tif")]
 
-pols = gpd.read_file("data/interim/manual_pols.fgb")
+pols = gpd.read_file(f"data/interim/{method}_pols.fgb")
 pols = pols.sort_values(by='id').reset_index(drop=True)
 
 stats_list = []
@@ -76,13 +78,13 @@ for index, row in pols.iterrows():
 df = pd.DataFrame(stats_list)
 
 # Get validation height from lidar
-h_lidar = pd.read_csv('data/processed/stats_manual_lidar_leafon.csv', index_col=0)
+h_lidar = pd.read_csv(f'data/processed/stats_{method}_lidar_leafon.csv', index_col=0)
 
 df[['area', 'h_lidar']] = h_lidar[['area', 'h_lidar']]
 
 df.set_index('id', inplace=True)
 
-df.to_parquet('data/processed/shrubs2ml.parquet')
+df.to_csv(f'data/processed/shrubs2ml_{method}.csv')
     
     
     
