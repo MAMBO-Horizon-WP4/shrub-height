@@ -7,7 +7,7 @@ import pandas as pd
 from src.modelling import utils as mlp # make sure it is added to path
 
 
-df = pd.read_parquet('data/processed/shrubs2ml.parquet')
+df = pd.read_csv('data/processed/shrubs2ml.csv')
 df = df.dropna()
 
 # Choose target
@@ -50,8 +50,8 @@ for target in targets:
         dfr['obs'] = y
         dfr['pred'] = yhat
         
-        imps.to_parquet('data/output/imps_'+target+'_'+mlmodel+'_'+method+'.parquet')
-        dfr.to_parquet('data/output/results_raw_'+target+'_'+mlmodel+'_'+method+'.parquet')
+        imps.to_csv('data/output/imps_'+target+'_'+mlmodel+'_'+method+'.csv')
+        dfr.to_csv('data/output/results_raw_'+target+'_'+mlmodel+'_'+method+'.csv')
         
         
         
