@@ -2,7 +2,7 @@
 
 ## Overview
 
-Provide a concise description of the project's purpose, objectives, and the problem it addresses.    
+A series of Python scripts to process LiDAR point clouds and SfM images at polygons identified as shrub masses, and estimate the height of the vegetation using Machine Learning algorithms.
 
 ## Usage
 
