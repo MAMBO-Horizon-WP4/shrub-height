@@ -52,6 +52,22 @@ shrub-height/
 ├── README.md          # Project documentation
 └── requirements.txt   # Python dependencies
 ```
+## Installation
+
+### Install GDAL
+
+This will vary according to your platform. For Debian/Ubuntu, it's like this, and gives you version 3.6.2:
+
+`sudo apt install gdal-bin`
+
+### Create python environment and install dependencies
+
+The versions of GDAL and of its python bindings need to match. Thus `pyproject.toml` is currently pinned to 3.6.2
+
+```
+python -m venv shrubsenv
+pip install -e .
+```
 
 ## License
 
