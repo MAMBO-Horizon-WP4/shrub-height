@@ -19,7 +19,7 @@ stages:
     cmd: python normalize_dsm.py
     deps:
       - normalize_dsm.py
-      - data/raw/DTM-1m/TL06sw_DTM_1m.tif
+      - data/raw/EA_1m/TL06sw_DTM_1m.tif
       - data/raw/SfM/StrawDSM_SfM_L1-geoid_apr24.tif
     outs:
       - data/interim/sfm_normalized.tif
