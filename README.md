@@ -69,6 +69,27 @@ python -m venv shrubsenv
 pip install -e .
 ```
 
+## Run with DVC
+
+### Preprocessing
+
+This assumes you have the project raw data in `data/raw` and an empty directory in `data/interim`.
+Change into the `prepro` directory and run `dvc repro`.
+
+```
+cd prepro
+dvc repro
+```
+
+_Note - until we've got shared storage established, working copy of `data/raw` is on an external drive mounted in this directory, I've done this:_
+
+```
+cd prepro
+ln -s /media/zool/mounted_drive/mambo_data/Projs/mambo-dl/shrub-height/data/raw raw
+mkdir interim
+dvc repro
+```
+
 ## License
 
 MIT
