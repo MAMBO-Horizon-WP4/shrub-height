@@ -52,6 +52,43 @@ shrub-height/
 ├── README.md          # Project documentation
 └── requirements.txt   # Python dependencies
 ```
+## Installation
+
+### Install GDAL
+
+This will vary according to your platform. For Debian/Ubuntu, it's like this, and gives you version 3.6.2:
+
+`sudo apt install gdal-bin`
+
+### Create python environment and install dependencies
+
+The versions of GDAL and of its python bindings need to match. Thus `pyproject.toml` is currently pinned to 3.6.2
+
+```
+python -m venv shrubsenv
+pip install -e .
+```
+
+## Run with DVC
+
+### Preprocessing
+
+This assumes you have the project raw data in `data/raw` and an empty directory in `data/interim`.
+Change into the `prepro` directory and run `dvc repro`.
+
+```
+cd prepro
+dvc repro
+```
+
+_Note - until we've got shared storage established, working copy of `data/raw` is on an external drive mounted in this directory, I've done this:_
+
+```
+cd prepro
+ln -s /media/zool/mounted_drive/mambo_data/Projs/mambo-dl/shrub-height/data/raw raw
+mkdir interim
+dvc repro
+```
 
 ## License
 

@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shrub-height"
+version = "0.1.0"
+requires-python = ">=3.9"
+description = "This package supports the processing and analysis of shrub heights from SfM, terrain and LiDAR data"
+readme = "README.md"
+dependencies = [
+  "dvc",
+  "numpy",
+  "pandas",
+  "geopandas",
+  "rasterio",
+  "gdal==3.6.2",
+  "scikit-learn"
+]
+
+[project.optional-dependencies]
+jupyter = ["jupyterlab", "jupytext", "matplotlib", "scikit-learn"]
+test = ["pytest", "pytest-cov", "pytest-mock", "parameterized"]
+lint = ["flake8", "isort", "ruff"]
+all = ["cyto_ml[jupyter,test,lint]"]
+
+[tool.jupytext]
+formats = "ipynb,md"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
+
+[tool.ruff]
+src = ["src", "tests"]
+include = ["src/**.py"]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["F", "E", "W", "A", "PLC", "PLE", "PLW", "I", "N816", "ANN001", "ANN201", "ANN202", "ANN205", "ANN206"]
+
+[tool.ruff.lint.flake8-type-checking]
+strict = true

@@ -12,7 +12,7 @@ import rasterio
 from rasterio.enums import Resampling
 from rasterio.warp import reproject, calculate_default_transform
 
-dtm_path = 'data/raw/DTM-1m/TL06sw_DTM_1m.tif'
+dtm_path = 'data/raw/EA_1m/TL06sw_DTM_1m.tif'
 folder_path = 'data/raw/SfM'
 dsm_path = 'data/raw/SfM/StrawDSM_SfM_L1-geoid_apr24.tif'
 output_folder = 'data/interim'

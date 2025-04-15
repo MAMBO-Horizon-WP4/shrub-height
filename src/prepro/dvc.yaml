@@ -1,0 +1,41 @@
+stages:
+  point2pol:
+    cmd: python point2pol.py
+    deps:
+      - point2pol.py
+      - data/raw/Field_measurements/shrub_clean.shp
+    outs:
+      - data/interim/field_pols.fgb
+
+  sfm_to_cog:
+    cmd: bash sfm_to_cog.sh
+    deps:
+      - sfm_to_cog.sh
+      - data/raw/SfM/strawberry_ortho_terraSfM_L1_apr24.tif
+    outs:
+      - data/interim/rgb_sfm.tif
+
+  normalize_dsm:
+    cmd: python normalize_dsm.py
+    deps:
+      - normalize_dsm.py
+      - data/raw/EA_1m/TL06sw_DTM_1m.tif
+      - data/raw/SfM/StrawDSM_SfM_L1-geoid_apr24.tif
+    outs:
+      - data/interim/sfm_normalized.tif
+
+  manual_labeled:
+    cmd: python manual_labeled.py
+    deps:
+      - manual_labeled.py
+      - data/raw/Manually_labeled/reprojected_yellow_low_shrub.shp
+    outs:
+      - data/interim/manual_pols.fgb
+
+  compute_slope:
+    cmd: bash compute_slope.sh
+    deps:
+      - compute_slope.sh
+      - data/interim/dsm_sfm.tif
+    outs:
+      - data/interim/slp_sfm.tif
