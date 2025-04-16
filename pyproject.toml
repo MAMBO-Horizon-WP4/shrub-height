@@ -1,45 +1,42 @@
 [build-system]
-requires = ["setuptools >= 61.0"]
+requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "shrub-height"
+name = "shrubheight"
 version = "0.1.0"
-requires-python = ">=3.9"
+requires-python = ">=3.8"
 description = "This package supports the processing and analysis of shrub heights from SfM, terrain and LiDAR data"
 readme = "README.md"
 dependencies = [
   "dvc",
-  "numpy",
-  "pandas",
-  "geopandas",
-  "rasterio",
-  "gdal==3.6.2",
-  "laspy",
-  "scikit-learn"
+    "numpy",
+    "pandas",
+    "geopandas",
+    "rasterio",
+    "gdal==3.7.2",
+    "s3fs",
+    "laspy",
+    "scikit-learn"
 ]
 
 [project.optional-dependencies]
-jupyter = ["jupyterlab", "jupytext", "matplotlib", "scikit-learn"]
-test = ["pytest", "pytest-cov", "pytest-mock", "parameterized"]
-lint = ["flake8", "isort", "ruff"]
-all = ["cyto_ml[jupyter,test,lint]"]
-
-[tool.jupytext]
-formats = "ipynb,md"
-
-[tool.pytest.ini_options]
-filterwarnings = [
-    "ignore::DeprecationWarning",
+test = [
+    "pytest>=7.0",
+    "pytest-cov"
 ]
 
-[tool.ruff]
-src = ["src", "tests"]
-include = ["src/**.py"]
-line-length = 120
+[tool.setuptools]
+package-dir = {"" = "src"}
 
-[tool.ruff.lint]
-select = ["F", "E", "W", "A", "PLC", "PLE", "PLW", "I", "N816", "ANN001", "ANN201", "ANN202", "ANN205", "ANN206"]
+[tool.pytest.ini_options]
+addopts = "--cov=shrubheight"
+testpaths = ["tests"]
 
-[tool.ruff.lint.flake8-type-checking]
-strict = true
+[tool.coverage.run]
+source = ["src"]
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+include = '\.pyi?$'

@@ -10,12 +10,25 @@ def create_circle(row):
     """Create circular buffer around point using diameter from measurements.
 
     Args:
-        row: GeoDataFrame row containing point geometry and d_mean field
+        row: GeoDataFrame row containing:
+            - geometry: Point geometry in centimeters
+            - d_mean: Mean diameter in centimeters
 
     Returns:
-        Circular polygon geometry
+        Circular polygon geometry in meters
+
+    Raises:
+        ValueError: If d_mean appears to be in centimeters (>5m is unlikely for shrubs)
     """
-    radius = row["d_mean"] / 100
+    diameter = row["d_mean"]
+
+    # Validation - warn if diameter seems too large (likely wrong units)
+    if diameter > 500:  # 5m diameter would be very large for a shrub
+        raise ValueError(
+            f"Diameter {diameter}m seems too large. Check if input is in meters not centimeters."
+        )
+
+    radius = diameter / 2
     return row["geometry"].buffer(radius)
 
 
