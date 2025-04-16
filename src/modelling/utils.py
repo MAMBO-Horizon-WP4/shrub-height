@@ -184,7 +184,9 @@ def kfold_cv(X, y, model, grid):
         yhat[test_index] = y_pred
 
         # Store importance scores for this fold (10 rows)
-        imps.iloc[importance_row : importance_row + 10, :] = r.importances.T  # noqa: E203
+        imps.iloc[importance_row : importance_row + 10, :] = (  # noqa: E203
+            r.importances.T
+        )
         importance_row += 10
 
         fold_number = importance_row // 10
