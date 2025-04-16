@@ -1,9 +1,12 @@
 stages:
   point2pol:
-    cmd: python point2pol.py
+    cmd: >-
+      python point2pol.py 
+      --input data/raw/Field_measurements/shrub_clean.shp
+      --output data/interim/field_pols.fgb
+      --epsg EPSG:27700
     deps:
       - point2pol.py
-      - data/raw/Field_measurements/shrub_clean.shp
     outs:
       - data/interim/field_pols.fgb
 
@@ -16,19 +19,25 @@ stages:
       - data/interim/rgb_sfm.tif
 
   normalize_dsm:
-    cmd: python normalize_dsm.py
+    cmd: >-
+      python normalize_dsm.py
+      --dtm data/raw/EA_1m/TL06sw_DTM_1m.tif
+      --dsm data/raw/SfM/StrawDSM_SfM_L1-geoid_apr24.tif
+      --output data/interim/sfm_normalized.tif
+      --crs EPSG:27700
     deps:
       - normalize_dsm.py
-      - data/raw/EA_1m/TL06sw_DTM_1m.tif
-      - data/raw/SfM/StrawDSM_SfM_L1-geoid_apr24.tif
     outs:
       - data/interim/sfm_normalized.tif
 
   manual_labeled:
-    cmd: python manual_labeled.py
+    cmd: >-
+      python manual_labeled.py
+      --input data/raw/Manually_labeled/reprojected_yellow_low_shrub.shp
+      --output data/interim/manual_pols.fgb
+      --crs EPSG:27700
     deps:
       - manual_labeled.py
-      - data/raw/Manually_labeled/reprojected_yellow_low_shrub.shp
     outs:
       - data/interim/manual_pols.fgb
 

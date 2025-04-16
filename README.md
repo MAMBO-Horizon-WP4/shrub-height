@@ -15,7 +15,7 @@ A series of Python scripts to process LiDAR point clouds and SfM images at polyg
 
 - **Aggregate LiDAR Point Clouds (PCs) at individual shrubs**: `src/treatment/las_pc_at_shrubs.py`
     - input: 
-        - indivudal shrub polygons file
+        - indiviudal shrub polygons file
         - point clouds files directory (raw)
     - output: 
         - one file per individual shrub containing point clouds
@@ -65,7 +65,8 @@ This will vary according to your platform. For Debian/Ubuntu, it's like this, an
 The versions of GDAL and of its python bindings need to match. Thus `pyproject.toml` is currently pinned to 3.6.2
 
 ```
-python -m venv shrubsenv
+python -m venv .venv
+source .venv/bin/activate
 pip install -e .
 ```
 

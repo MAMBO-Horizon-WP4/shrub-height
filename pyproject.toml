@@ -15,6 +15,7 @@ dependencies = [
   "geopandas",
   "rasterio",
   "gdal==3.6.2",
+  "laspy",
   "scikit-learn"
 ]
 
