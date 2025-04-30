@@ -6,6 +6,7 @@ Which also shows working with project data from S3
 import geopandas as gpd
 import rasterio
 from rasterio.session import AWSSession
+from shapely.geometry import box
 from dotenv import load_dotenv
 import os
 import logging
@@ -35,7 +36,7 @@ def draw_bounds(filepath: str) -> tuple:
     shp = f"https://{s3_url}/{filepath}"
     logging.info(shp)
     gdf = gpd.read_file(shp)
-    point = gdf.geometry.iloc[0]
+    point = box(*gdf.geometry.iloc[0:2].total_bounds)
     buffer_distance = 5  # meters
     buffered_geom = point.buffer(buffer_distance)
 
@@ -69,6 +70,8 @@ def cut_dsm(filepath: str, outpath: str, bounds: list) -> None:
 if __name__ == "__main__":
     # This works with a zipfile, but not with a .shp file
     # See https://github.com/geopandas/geopandas/issues/3129 for context
-    bounds = draw_bounds("shrub-height/raw/Field_measurements/shrub_clean.zip")
+    # geoms = "shrub-height/raw/Field_measurements/shrub_clean.zip"
+    geoms = "shrub-height/interim/field_pols.fgb"
+    bounds = draw_bounds(geoms)
     dsm = "s3://shrub-height/interim/dsm_sfm.tif"
     cut_dsm(dsm, "../tests/data/test_dsm.tif", bounds)

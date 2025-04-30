@@ -8,6 +8,7 @@ Created on Fri Mar 22 09:32:00 2024
 import os
 import argparse
 from pathlib import Path
+from typing import NamedTuple
 import geopandas as gpd
 import numpy as np
 import pandas as pd
@@ -51,26 +52,26 @@ def compute_stats(dname: str, data: np.ndarray) -> dict:
     return stats_result
 
 
-def get_raster_stats(polygon: gpd.GeoDataFrame, raster_files: list) -> dict:
+def get_raster_stats(polygon: NamedTuple, raster_files: list) -> dict:
     """Extract and compute statistics from raster data for a given polygon.
 
     Args:
-        polygon: GeoDataFrame row containing polygon geometry
+        polygon: a NamedTuple - GeoDataFrame row with itertuples() - containing polygon geometry
         raster_files: List of paths to raster files
 
     Returns:
         Dictionary of computed statistics
     """
     stats_d = {}
-    print(polygon.id)
+
     for raster_file in raster_files:
+        # TODO - depending on file naming conventions brittle
         dname = raster_file.split("/")[-1].split("_")[-2]
         with rasterio.open(raster_file) as src:
             # If the polygon intersects the bounding box of the raster
             if not rasterio.coords.disjoint_bounds(src.bounds, polygon.geometry.bounds):
-                print(raster_file)
                 # Read the raster data that overlaps with the polygon
-                out_image, out_transform = mask(src, [polygon.geometry], crop=True)
+                out_image, _ = mask(src, [polygon.geometry], crop=True)
 
                 if src.count >= 3:
                     red, green, blue = out_image[:3].astype(float)
@@ -80,7 +81,6 @@ def get_raster_stats(polygon: gpd.GeoDataFrame, raster_files: list) -> dict:
                     no_data = src.nodata
                     data = out_image[out_image != no_data]
 
-                print(data.mean())
                 # Store the results
                 if (data.size > 0) & (data.mean() != 0):
                     stats_d = compute_stats(dname, data)
