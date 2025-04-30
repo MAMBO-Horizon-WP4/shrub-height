@@ -104,7 +104,9 @@ def process_data(input_dir: str, method: str, output_dir: str) -> None:
     # Revisit this interface if scaling up! Pass in a list, or a filename that has a list in it
     data_files = [os.path.join(input_dir, "sfm_normalized.tif")]
 
-    pols_path = Path(input_dir) / f"{method}_pols.fgb"
+    # Note - this was pathlib.Path but that truncates s3:// URLs, throws errors
+    # This should work with either s3 or local filesystem paths
+    pols_path = os.path.join(input_dir, f"{method}_pols.fgb")
     pols = gpd.read_file(pols_path)
     pols = pols.sort_values(by="id").reset_index(drop=True)
 
