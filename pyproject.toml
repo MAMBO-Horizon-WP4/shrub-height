@@ -9,14 +9,17 @@ requires-python = ">=3.9"
 description = "This package supports the processing and analysis of shrub heights from SfM, terrain and LiDAR data"
 readme = "README.md"
 dependencies = [
-  "dvc",
-  "numpy",
-  "pandas",
-  "geopandas",
-  "rasterio",
-  "gdal==3.6.2",
-  "laspy",
-  "scikit-learn"
+    "boto3",
+    "dvc",
+    "dotenv",
+    "numpy",
+    "pandas",
+    "geopandas",
+    "rasterio",
+    "matplotlib",
+    "s3fs",
+    "laspy",
+    "scikit-learn"
 ]
 
 [project.optional-dependencies]
