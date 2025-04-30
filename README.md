@@ -60,6 +60,18 @@ This will vary according to your platform. For Debian/Ubuntu, it's like this, an
 
 `sudo apt install gdal-bin`
 
+#### GDAL without root access
+
+The cleanest way to do this is to use the GDAL version that comes pre-built with `conda`. In which case follow these instructions to create a python environment with `miniconda` and install GDAL that way
+
+```
+conda create -n shrubheight python=3.8
+conda activate shrubheight
+conda install -c conda-forge proj=9.2 proj-data=1.12
+conda install -c conda-forge gdal=3.7
+conda install -c conda-forge geopandas rasterio
+```
+
 ### Create python environment and install dependencies
 
 The versions of GDAL and of its python bindings need to match. Thus `pyproject.toml` is currently pinned to 3.6.2
@@ -67,8 +79,14 @@ The versions of GDAL and of its python bindings need to match. Thus `pyproject.t
 ```
 python -m venv .venv
 source .venv/bin/activate
-pip install -e .
 ```
+
+Now install our package and its dependencies:
+
+```
+pip install -e .[dev,test]
+```
+
 
 ## Run with DVC
 

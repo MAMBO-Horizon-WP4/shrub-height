@@ -5,4 +5,5 @@ geopandas
 rasterio
 gdal
 laspy
+s3fs
 scikit-learn
