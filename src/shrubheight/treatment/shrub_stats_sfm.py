@@ -82,9 +82,12 @@ def get_raster_stats(polygon: NamedTuple, raster_files: list) -> dict:
                     data = out_image[out_image != no_data]
 
                 # Store the results
+                # Note: in the case a polygon crosses a boundary,
+                # There will only be stats for the last raster.
+                # In practise so far, our input is always only one large raster
                 if (data.size > 0) & (data.mean() != 0):
                     stats_d = compute_stats(dname, data)
-                    # break
+
     return stats_d
 
 
@@ -93,14 +96,13 @@ def process_data(input_dir: str, method: str, output_dir: str) -> None:
 
     Args:
         input_dir: Directory containing input files
-        method: Processing method identifier
+        method: Processing method identifier (One of "field" or "manual")
         output_dir: Directory for output files
     """
-    data_files = [
-        os.path.join(input_dir, f)
-        for f in os.listdir(input_dir)
-        if f.startswith("sfm_normalized") and f.endswith(".tif")
-    ]
+    # Note: there's only one file output by the previous stage.
+    # This was previously checking for many, with wildcard file name matching.
+    # Revisit this interface if scaling up! Pass in a list, or a filename that has a list in it
+    data_files = [os.path.join(input_dir, "sfm_normalized.tif")]
 
     pols_path = Path(input_dir) / f"{method}_pols.fgb"
     pols = gpd.read_file(pols_path)
