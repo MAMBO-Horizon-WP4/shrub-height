@@ -15,7 +15,7 @@ import pandas as pd
 import rasterio
 from rasterio.mask import mask
 import s3fs
-import tqdm
+from tqdm import tqdm
 
 
 def compute_Ps(dname: str, data: np.ndarray) -> np.ndarray:
@@ -72,7 +72,7 @@ def get_raster_stats(polygons: gpd.GeoDataFrame, raster_files: dict) -> dict:
         # TODO - depending on file naming conventions brittle
         # It's better if we pass in a dict here - more flexible later too
         dname = file_shortname(filename)
-        with rasterio.open(dname) as src:
+        with rasterio.open(filename) as src:
 
             for polygon in tqdm(polygons.itertuples()):
                 stats_d = {"id": int(polygon.id)}
@@ -82,7 +82,7 @@ def get_raster_stats(polygons: gpd.GeoDataFrame, raster_files: dict) -> dict:
                     src.bounds, polygon.geometry.bounds
                 ):
                     # Read the raster data that overlaps with the polygon
-                    data = masked_polygon(polygon)
+                    data = masked_polygon(src, polygon)
                     if (data.size > 0) & (data.mean() != 0):
                         stats_d = compute_stats(dname, data)
                         stats.append(stats_d)
@@ -140,7 +140,7 @@ def find_input_rasters(input_dir: str) -> list:
 
 
 def process_data(
-    input_dir: str, method: str, output_dir: str, lidar_path: Optional[str]
+    input_dir: str, method: str, output_dir: str, lidar_path: Optional[str] = None
 ) -> None:
     """Process SfM data and calculate statistics for polygons.
 

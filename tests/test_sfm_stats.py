@@ -22,5 +22,5 @@ def test_get_raster_stats(test_dsm, test_gpd):
         assert all(f"sfm_{key}" in stats for key in expected_keys)
 
 
-def test_process_data(fixture_dir, tmp_path, lidar_path):
-    process_data(fixture_dir, "field", tmp_path, lidar_path)
+def test_process_data(fixture_dir, tmp_path, test_lidar_path):
+    process_data(fixture_dir, "field", tmp_path, lidar_path=test_lidar_path)
