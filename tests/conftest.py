@@ -38,7 +38,7 @@ def test_raster(tmp_path):
 @pytest.fixture
 def test_dsm(fixture_dir):
     """Return a file path to real data sample dsm"""
-    return os.path.join(fixture_dir, "test_dsm.tif")
+    return os.path.join(fixture_dir, "sfm_normalized.tif")
 
 
 @pytest.fixture
@@ -46,3 +46,9 @@ def test_gpd(fixture_dir):
     """Return a geopandas dataframe with a test observation"""
     # return gpd.read_file(os.path.join(fixture_dir, "shrub_sample.shp"))
     return gpd.read_file(os.path.join(fixture_dir, "field_pols.fgb"))
+
+
+@pytest.fixture
+def test_lidar_path(fixture_dir):
+    """Return a file path to real data sample dsm"""
+    return os.path.join(fixture_dir, "stats_field_lidar_leafon.csv")

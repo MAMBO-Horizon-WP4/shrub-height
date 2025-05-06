@@ -80,7 +80,6 @@ data/**/*.*
 
 
 # exclude data files from source control by default
-*.csv
 *.xls
 *.xlsx
 

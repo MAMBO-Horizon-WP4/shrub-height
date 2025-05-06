@@ -1,4 +1,4 @@
-from shrubheight.treatment.shrub_stats_sfm import get_raster_stats
+from shrubheight.treatment.shrub_stats_sfm import get_raster_stats, process_data
 
 
 def test_get_raster_stats(test_dsm, test_gpd):
@@ -19,4 +19,8 @@ def test_get_raster_stats(test_dsm, test_gpd):
             "25th_percentile",
             "75th_percentile",
         ]
-        assert all(f"test_{key}" in stats for key in expected_keys)
+        assert all(f"sfm_{key}" in stats for key in expected_keys)
+
+
+def test_process_data(fixture_dir, tmp_path, lidar_path):
+    process_data(fixture_dir, "field", tmp_path, lidar_path)
