@@ -125,10 +125,12 @@ def find_input_rasters(input_dir: str) -> list:
     """Given a directory, identify rasters to use as input.
     Currently specifically matches `sfm_normalized` (output of previous stage)
     Could be made more generic in future!
+
+    This depends on having anonymous read enabled for object storage
     """
     files = []
     if input_dir.startswith("s3"):
-        s3 = s3fs.S3FileSystem()
+        s3 = s3fs.S3FileSystem(anon=True)
         files = s3.ls(input_dir)
 
     else:
