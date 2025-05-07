@@ -128,19 +128,24 @@ def find_input_rasters(input_dir: str) -> list:
 
     This depends on having anonymous read enabled for object storage
     """
-    files = []
+    input_files = []
     if input_dir.startswith("s3"):
         s3 = s3fs.S3FileSystem(anon=True)
         files = s3.ls(input_dir)
+        input_files = [
+            f"s3://{f}" for f in files if "sfm_normalized" in f and f.endswith(".tif")
+        ]
 
     else:
         files = os.listdir(input_dir)
 
-    return [
-        os.path.join(input_dir, f)
-        for f in files
-        if f.startswith("sfm_normalized") and f.endswith(".tif")
-    ]
+        input_files = [
+            os.path.join(input_dir, f)
+            for f in files
+            if f.startswith("sfm_normalized") and f.endswith(".tif")
+        ]
+
+    return input_files
 
 
 def process_data(
