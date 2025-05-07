@@ -82,7 +82,7 @@ def get_raster_stats(polygons: gpd.GeoDataFrame, raster_files: dict) -> dict:
                     src.bounds, polygon.geometry.bounds
                 ):
                     # Read the raster data that overlaps with the polygon
-                    data = masked_polygon(src, polygon)
+                    data = get_masked_raster(src, polygon)
                     if (data.size > 0) & (data.mean() != 0):
                         stats_d = compute_stats(dname, data)
                         stats_d["id"] = int(polygon.id)
@@ -91,7 +91,7 @@ def get_raster_stats(polygons: gpd.GeoDataFrame, raster_files: dict) -> dict:
     return stats
 
 
-def masked_polygon(src: rasterio.DatasetReader, polygon: NamedTuple):
+def get_masked_raster(src: rasterio.DatasetReader, polygon: NamedTuple):
     """
     Read the image bands within a polygon mask
     If it's 3 band, return a binary array of all values that aren't nodata
