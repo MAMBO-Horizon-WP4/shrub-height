@@ -1,9 +1,12 @@
+"""Note - this is left as a script until we decide how much should be in the notebook
+Currently runs as-is, cut and pasted into a cell
+"""
 import os
 import logging
 
 import pandas as pd
 
-from src.modelling import utils as mlp  # make sure it is added to path
+from shrubheight.modelling import utils as mlp  # make sure it is added to path
 
 os.chdir("shrub-height")
 df = pd.read_csv("data/processed/shrubs2ml.csv")
