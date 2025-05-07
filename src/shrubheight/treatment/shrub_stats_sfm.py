@@ -55,7 +55,8 @@ def compute_stats(dname: str, data: np.ndarray) -> dict:
 
 
 def get_raster_stats(polygons: gpd.GeoDataFrame, raster_files: dict) -> dict:
-    """Extract and compute statistics from raster data for a given polygon.
+    """Extract and compute statistics from raster data for a collection of polygons.
+    Polygons that overlap with the raster but are all nodata values are skipped over
 
     Args:
         polygons: a GeoDataFrame containing polygon geometry
