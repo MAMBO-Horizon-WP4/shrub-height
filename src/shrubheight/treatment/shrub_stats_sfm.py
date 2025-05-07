@@ -75,7 +75,7 @@ def get_raster_stats(polygons: gpd.GeoDataFrame, raster_files: dict) -> dict:
         with rasterio.open(filename) as src:
 
             for polygon in tqdm(polygons.itertuples()):
-                stats_d = {"id": int(polygon.id)}
+                stats_d = {}
 
                 # If the polygon intersects the bounding box of the raster
                 if not rasterio.coords.disjoint_bounds(
@@ -85,6 +85,7 @@ def get_raster_stats(polygons: gpd.GeoDataFrame, raster_files: dict) -> dict:
                     data = masked_polygon(src, polygon)
                     if (data.size > 0) & (data.mean() != 0):
                         stats_d = compute_stats(dname, data)
+                        stats_d["id"] = int(polygon.id)
                         stats.append(stats_d)
 
     return stats

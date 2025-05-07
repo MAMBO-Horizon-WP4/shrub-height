@@ -6,20 +6,19 @@ def test_get_raster_stats(test_dsm, test_gpd):
     # Create test raster files
     raster_files = [test_dsm]  # Mock file paths
 
-    for row in test_gpd.itertuples():
-        stats = get_raster_stats(row, raster_files)
-        assert isinstance(stats, dict)
+    stats = get_raster_stats(test_gpd, raster_files)
+    assert isinstance(stats[0], dict)
 
-        expected_keys = [
-            "mean",
-            "median",
-            "std",
-            "min",
-            "max",
-            "25th_percentile",
-            "75th_percentile",
-        ]
-        assert all(f"sfm_{key}" in stats for key in expected_keys)
+    expected_keys = [
+        "mean",
+        "median",
+        "std",
+        "min",
+        "max",
+        "25th_percentile",
+        "75th_percentile",
+    ]
+    assert all(f"sfm_{key}" in stats[0] for key in expected_keys)
 
 
 def test_process_data(fixture_dir, tmp_path, test_lidar_path):
