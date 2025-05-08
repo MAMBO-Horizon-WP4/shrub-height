@@ -8,12 +8,14 @@ Created on Fri Mar 22 09:32:00 2024
 import os
 import argparse
 from pathlib import Path
-from typing import NamedTuple
+from typing import NamedTuple, Optional
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 import rasterio
 from rasterio.mask import mask
+import s3fs
+from tqdm import tqdm
 
 
 def compute_Ps(dname: str, data: np.ndarray) -> np.ndarray:
@@ -52,70 +54,130 @@ def compute_stats(dname: str, data: np.ndarray) -> dict:
     return stats_result
 
 
-def get_raster_stats(polygon: NamedTuple, raster_files: list) -> dict:
-    """Extract and compute statistics from raster data for a given polygon.
+def get_raster_stats(polygons: gpd.GeoDataFrame, raster_files: dict) -> dict:
+    """Extract and compute statistics from raster data for a collection of polygons.
+    Polygons that overlap with the raster but are all nodata values are skipped over
 
     Args:
-        polygon: a NamedTuple - GeoDataFrame row with itertuples() - containing polygon geometry
-        raster_files: List of paths to raster files
+        polygons: a GeoDataFrame containing polygon geometry
+        raster_files: dict of raster file data
+            name : { bounds : (tuple)
+                     path: str }
 
     Returns:
         Dictionary of computed statistics
     """
-    stats_d = {}
+    stats = []
 
-    for raster_file in raster_files:
+    for filename in raster_files:
         # TODO - depending on file naming conventions brittle
-        dname = raster_file.split("/")[-1].split("_")[-2]
-        with rasterio.open(raster_file) as src:
-            # If the polygon intersects the bounding box of the raster
-            if not rasterio.coords.disjoint_bounds(src.bounds, polygon.geometry.bounds):
-                # Read the raster data that overlaps with the polygon
-                out_image, _ = mask(src, [polygon.geometry], crop=True)
+        # It's better if we pass in a dict here - more flexible later too
+        dname = file_shortname(filename)
+        with rasterio.open(filename) as src:
 
-                if src.count >= 3:
-                    red, green, blue = out_image[:3].astype(float)
-                    data = (green - red) / (green + red - blue + 1e-6)
-                    data = data[data <= 1]
-                else:
-                    no_data = src.nodata
-                    data = out_image[out_image != no_data]
+            for polygon in tqdm(polygons.itertuples()):
+                stats_d = {}
 
-                # Store the results
-                if (data.size > 0) & (data.mean() != 0):
-                    stats_d = compute_stats(dname, data)
-                    # break
-    return stats_d
+                # If the polygon intersects the bounding box of the raster
+                if not rasterio.coords.disjoint_bounds(
+                    src.bounds, polygon.geometry.bounds
+                ):
+                    # Read the raster data that overlaps with the polygon
+                    data = get_masked_raster(src, polygon)
+                    if (data.size > 0) & (data.mean() != 0):
+                        stats_d = compute_stats(dname, data)
+                        stats_d["id"] = int(polygon.id)
+                        stats.append(stats_d)
+
+    return stats
 
 
-def process_data(input_dir: str, method: str, output_dir: str) -> None:
+def get_masked_raster(src: rasterio.DatasetReader, polygon: NamedTuple):
+    """
+    Read the image bands within a polygon mask
+    If it's 3 band, return a binary array of all values that aren't nodata
+    If its more than 3 band, return a binary array of all values that are <1 where
+    (green - red) / (green + red - blue + 1e-6)
+    Note: add an explanation of why this is!
+    """
+    out_image, _ = mask(src, [polygon.geometry], crop=True)
+
+    if src.count >= 3:
+        red, green, blue = out_image[:3].astype(float)
+        data = (green - red) / (green + red - blue + 1e-6)
+        data = data[data <= 1]
+    else:
+        no_data = src.nodata
+        data = out_image[out_image != no_data]
+
+    return data
+
+
+def file_shortname(raster_file: str) -> str:
+    """
+    Utility to extract a short alias for an input file
+    Better to use a catalogue or index for this than rely on naming conventions!
+    """
+    return raster_file.split("/")[-1].split("_")[-2]
+
+
+def find_input_rasters(input_dir: str) -> list:
+    """Given a directory, identify rasters to use as input.
+    Currently specifically matches `sfm_normalized` (output of previous stage)
+    Could be made more generic in future!
+
+    This depends on having anonymous read enabled for object storage
+    """
+    input_files = []
+    if input_dir.startswith("s3"):
+        s3 = s3fs.S3FileSystem(anon=True)
+        files = s3.ls(input_dir)
+        input_files = [
+            f"s3://{f}" for f in files if "sfm_normalized" in f and f.endswith(".tif")
+        ]
+
+    else:
+        files = os.listdir(input_dir)
+
+        input_files = [
+            os.path.join(input_dir, f)
+            for f in files
+            if f.startswith("sfm_normalized") and f.endswith(".tif")
+        ]
+
+    return input_files
+
+
+def process_data(
+    input_dir: str, method: str, output_dir: str, lidar_path: Optional[str] = None
+) -> None:
     """Process SfM data and calculate statistics for polygons.
 
     Args:
         input_dir: Directory containing input files
-        method: Processing method identifier
+        method: Processing method identifier (One of "field" or "manual")
         output_dir: Directory for output files
     """
-    data_files = [
-        os.path.join(input_dir, f)
-        for f in os.listdir(input_dir)
-        if f.startswith("sfm_normalized") and f.endswith(".tif")
-    ]
+    # Checks for dsm_ and sfm_ prefixed files in a single directory.
+    # Revisit this interface if scaling up! Pass in a list, or a filename that has a list in it
+    # Intermediate issue here is s3 filename matching
 
-    pols_path = Path(input_dir) / f"{method}_pols.fgb"
+    data_files = find_input_rasters(input_dir)
+
+    # Note - this was pathlib.Path but that truncates s3:// URLs, throws errors
+    # This should work with either s3 or local filesystem paths
+    pols_path = os.path.join(input_dir, f"{method}_pols.fgb")
     pols = gpd.read_file(pols_path)
     pols = pols.sort_values(by="id").reset_index(drop=True)
 
-    stats_list = []
-    for _, row in pols.iterrows():
-        stats = get_raster_stats(row, data_files)
-        stats["id"] = int(row.id)
-        stats_list.append(stats)
+    stats_list = get_raster_stats(pols, data_files)
 
     df = pd.DataFrame(stats_list)
 
     # Get validation height from lidar
-    lidar_path = Path(output_dir) / f"stats_{method}_lidar_leafon.csv"
+    # Option to supply a path, or default to output from previous stage
+    if not lidar_path:
+        lidar_path = Path(output_dir) / f"stats_{method}_lidar_leafon.csv"
     h_lidar = pd.read_csv(lidar_path, index_col=0)
 
     df[["area", "h_lidar"]] = h_lidar[["area", "h_lidar"]]

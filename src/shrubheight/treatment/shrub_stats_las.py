@@ -13,7 +13,9 @@ import numpy as np
 
 
 def calculate_statistics(points):
-    """...existing docstring..."""
+    """
+    Return a dict of summary statistics for a set of LiDAR points
+    """
     stats = {}
     stats["mean"] = points.mean()
     stats["median"] = points.median()
